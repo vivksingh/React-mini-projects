@@ -1,8 +1,11 @@
-import { useState } from "react";
+import {IoIosAdd} from "react-icons/io"
+import { useContext, useRef } from "react";
+import { TodoItemsContext } from "../store/Todo-Items-Store";
 
-function AddToDo({onAddClick}) {
-    let [name, setName] = useState('');
-    let [date, setDate] = useState('');
+function AddToDo() {
+    let toDoNameElement = useRef('');
+    let dueDateElement = useRef('');
+    const onAddClick = useContext(TodoItemsContext).handleAddNewItem;
 
     // const handleNameChange = (event) => {
     //     let val = event.target.value;
@@ -14,29 +17,34 @@ function AddToDo({onAddClick}) {
     //     if(val) setDate(val);
     // }
 
-    const handleNewItem = (name, date) =>{
+    const handleNewItem = (event) =>{
+        event.preventDefault();
+        const name = toDoNameElement.current.value;
+        const date = dueDateElement.current.value;
+        // console.dir(toDoNameElement.current);
+        // console.dir(dueDateElement.current);
+        toDoNameElement.current.value = '';
+        dueDateElement.current.value = '';
         if(name && date) onAddClick(name, date);
         else alert("invalid input");
-        setName('');
-        setDate('');
     }
 
     return(
-    <div className="row my-row">
+    <form className="row my-row" onSubmit={(event) => handleNewItem(event)}>
         <div className="col-6">
-        <input type="text" placeholder=" Enter your task" value = {name} onChange={(event) => setName(event.target.value)} />
+        <input type="text" placeholder=" Enter your task" ref = {toDoNameElement} />
         </div>
 
         <div className="col-4">
-        <input type="date" value = {date} onChange={(event) => setDate(event.target.value)} />
+        <input type="date" ref = {dueDateElement} />
         </div>
 
         <div className="col-2">
-        <button type="button" className="btn btn-success my-button" onClick = {() => handleNewItem(name, date)}>
-            Add task
+        <button type="submit" className="btn btn-success my-button">
+            Add task <IoIosAdd />
         </button>
         </div>
-    </div>
+    </form>
   );
 }
 
